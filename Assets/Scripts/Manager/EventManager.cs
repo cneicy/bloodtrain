@@ -6,6 +6,9 @@ using Utils;
 
 namespace Manager
 {
+    /*
+     * 订阅事件的方法一定要是public且返回值为object
+     */
     public class EventManager : Singleton<EventManager>
     {
         // 使用泛型事件字典来存储事件和处理程序
