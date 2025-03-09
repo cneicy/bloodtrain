@@ -6,51 +6,22 @@ using UnityEngine;
 
 namespace Utils.KeyboardInput
 {
-    public class KeySettingManager : MonoBehaviour
+    public class KeySettingManager : Singleton<KeySettingManager>
     {
         // 存储所有键位映射
         public List<KeyMapping> keyMappings = new();
         // 文件路径，用于保存和加载键位设置
         public string filePath;
 
-        // 单例模式
-        private static KeySettingManager _instance;
-
-        // 获取或创建KeySettingManager的单例实例
-        public static KeySettingManager Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-                
-                _instance = FindObjectOfType<KeySettingManager>();
-                if (_instance == null)
-                {
-                    var go = new GameObject(nameof(KeySettingManager));
-                    _instance = go.AddComponent<KeySettingManager>();
-                }
-                
-                return _instance;
-            }
-        }
-
         // 当前的方向
         public Vector2 Direction { get; private set; }
 
         // 初始化，确保只有一个实例并加载键位设置
-        private void Awake()
+        protected override void Awake()
         {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);  // 保证对象不会在场景切换时被销毁
-                filePath = Path.Combine(Application.persistentDataPath, "KeySetting.json");
-                LoadKeySettings();  // 加载键位设置
-            }
+            base.Awake();
+            filePath = Path.Combine(Application.persistentDataPath, "KeySetting.json");
+            LoadKeySettings();  // 加载键位设置
         }
 
         // 加载键位设置，如果不存在则创建默认配置
@@ -66,11 +37,11 @@ namespace Utils.KeyboardInput
                 // 创建默认键位设置
                 keyMappings = new List<KeyMapping>
                 {
-                    new KeyMapping("Attack", KeyCode.J),
-                    new KeyMapping("Left", KeyCode.A),
-                    new KeyMapping("Right", KeyCode.D),
-                    new KeyMapping("Up", KeyCode.W),
-                    new KeyMapping("Down", KeyCode.S)
+                    new("Attack", KeyCode.J),
+                    new("Left", KeyCode.A),
+                    new("Right", KeyCode.D),
+                    new("Up", KeyCode.W),
+                    new("Down", KeyCode.S)
                 };
                 SaveKeySettings();  // 保存默认设置
             }
@@ -93,11 +64,9 @@ namespace Utils.KeyboardInput
         public void SetKey(string actionName, KeyCode newKeyCode)
         {
             var mapping = keyMappings.FirstOrDefault(m => m.actionName == actionName);
-            if (mapping != null)
-            {
-                mapping.keyCode = newKeyCode;
-                SaveKeySettings();  // 保存更新后的设置
-            }
+            if (mapping == null) return;
+            mapping.keyCode = newKeyCode;
+            SaveKeySettings();  // 保存更新后的设置
         }
 
         // 每帧更新方向，基于键盘输入

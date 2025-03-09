@@ -50,7 +50,7 @@ namespace Manager
         {
             if (!_eventHandlers.ContainsKey(eventName)) return;
             _eventHandlers[eventName] = null;
-            Debug.Log($"Event {eventName} cancelled");
+            Debug.Log($"事件 {eventName} 已取消。");
         }
 
         public void UnregisterAllEventsForObject(object targetObject)
@@ -81,7 +81,7 @@ namespace Manager
                 }
             }
 
-            Debug.Log($"All events unregistered for object: {targetObject}");
+            Debug.Log($"已为 {targetObject} 注销所有事件订阅。");
         }
 
 
@@ -89,7 +89,7 @@ namespace Manager
         public void UnregisterAllEvents()
         {
             _eventHandlers.Clear();
-            Debug.Log("All events have been unregistered.");
+            Debug.Log("所有事件订阅已被注销。");
         }
 
         // 从带有 EventSubscribe 特性的方法中自动注册事件处理程序

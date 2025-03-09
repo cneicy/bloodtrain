@@ -35,7 +35,7 @@ namespace Utils.Pool
         {
             if (prefab is null)
             {
-                Debug.LogError("预制体为空");
+                Debug.LogError("预制体为空。");
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace Utils.Pool
         {
             if (_pool is null)
             {
-                Debug.LogWarning(typeof(T).Name + " 对象池未实例化");
+                Debug.LogWarning(typeof(T).Name + " 对象池未实例化。");
                 return;
             }
 
@@ -84,7 +84,7 @@ namespace Utils.Pool
         {
             if (_pool is null)
             {
-                Debug.LogWarning(typeof(T).Name + " 对象池未实例化");
+                Debug.LogWarning(typeof(T).Name + " 对象池未实例化。");
                 return null;
             }
 

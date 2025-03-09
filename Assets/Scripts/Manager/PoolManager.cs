@@ -137,13 +137,13 @@ namespace Manager
         {
             if (string.IsNullOrEmpty(poolId))
             {
-                Debug.LogError("池ID不能为空");
+                Debug.LogError("池ID不能为空。");
                 return;
             }
 
             if (_pools.ContainsKey(poolId))
             {
-                Debug.LogWarning($"对象池 '{poolId}' 已存在");
+                Debug.LogWarning($"对象池 '{poolId}' 已存在。");
                 return;
             }
 
@@ -157,7 +157,7 @@ namespace Manager
             }
             catch (Exception ex)
             {
-                Debug.LogError($"创建对象池失败: {ex.Message}");
+                Debug.LogError($"创建对象池失败: {ex.Message}。");
                 UnityEngine.Object.Destroy(container.gameObject);
             }
         }
@@ -166,12 +166,12 @@ namespace Manager
         {
             if (!_pools.TryGetValue(poolId, out var pool))
             {
-                Debug.LogError($"对象池 '{poolId}' 不存在");
+                Debug.LogError($"对象池 '{poolId}' 不存在。");
                 return null;
             }
 
             if (pool.ObjectType == typeof(T)) return pool.Get(parent ?? PoolRoot) as T;
-            Debug.LogError($"类型不匹配: 请求的 {typeof(T)} 但池包含 {pool.ObjectType}");
+            Debug.LogError($"类型不匹配: 请求的 {typeof(T)} 但池包含 {pool.ObjectType}。");
             return null;
 
         }
@@ -180,13 +180,13 @@ namespace Manager
         {
             if (!_pools.TryGetValue(poolId, out var pool))
             {
-                Debug.LogError($"对象池 '{poolId}' 不存在");
+                Debug.LogError($"对象池 '{poolId}' 不存在。");
                 return;
             }
 
             if (pool.ObjectType != typeof(T))
             {
-                Debug.LogError($"类型不匹配: 尝试释放 {typeof(T)} 到包含 {pool.ObjectType} 的池");
+                Debug.LogError($"类型不匹配: 尝试释放 {typeof(T)} 到包含 {pool.ObjectType} 的池。");
                 return;
             }
 

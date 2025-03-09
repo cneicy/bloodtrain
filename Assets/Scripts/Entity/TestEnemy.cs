@@ -9,7 +9,7 @@ namespace Entity
         {
             base.Die();
             if (Health > 0) return;
-            PoolManager.Release("EnemyPool", this);
+            PoolManager.Release("Enemy", this);
             print("Die");
         }
     }

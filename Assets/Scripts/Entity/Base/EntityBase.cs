@@ -14,13 +14,15 @@ namespace Entity.Base
         private void OnEnable()
         {
             EventManager.Instance.RegisterEventHandlersFromAttributes(this);
-            EntityManager.Instance.Entities.Add(this);
+            //EntityManager.Instance.Entities.Add(this);
+            EventManager.Instance.TriggerEvent("EntitySpawn", this);
         }
 
         private void OnDisable()
         {
             EventManager.Instance.UnregisterAllEventsForObject(this);
-            EntityManager.Instance.Entities.Remove(this);
+            //EntityManager.Instance.Entities.Remove(this);
+            EventManager.Instance.TriggerEvent("EntityDie", this);
         }
 
         [EventSubscribe("TracePositionChange")]

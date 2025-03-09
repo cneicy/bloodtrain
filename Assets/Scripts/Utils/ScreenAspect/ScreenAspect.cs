@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace AnnoyingUtils.ScreenAspect
+namespace Utils.ScreenAspect
 {
     public class ScreenAspect : MonoBehaviour
     {
         //目标比例，默认16:9
-        public float TargetAspect = 16f / 9f;
+        public float targetAspect = 16f / 9f;
         private Camera _mainCamera;
 
         private void Awake()
@@ -13,7 +14,7 @@ namespace AnnoyingUtils.ScreenAspect
             _mainCamera = Camera.main;
             var windowAspect = Screen.width / (float)Screen.height;
 
-            var scaleHeight = windowAspect / TargetAspect;
+            var scaleHeight = windowAspect / targetAspect;
 
             if (scaleHeight < 1f)
             {

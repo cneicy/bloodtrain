@@ -22,7 +22,7 @@ namespace Utils.Pool.Editor
                 if (existingInstances.Length != 0) continue;
                 var obj = new GameObject(type.Name);
                 obj.AddComponent(type);
-                Debug.Log(type.Name + " 单例实力已创建");
+                Debug.Log(type.Name + " 单例已创建。");
             }
         }
     }

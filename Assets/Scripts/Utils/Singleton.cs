@@ -16,7 +16,7 @@ namespace Utils
             {
                 if (_isShuttingDown)
                 {
-                    Debug.LogWarning($"[Singleton] Instance of {typeof(T)} is already destroyed. Returning null.");
+                    Debug.LogWarning($"[Singleton] 实例 {typeof(T)} 已经销毁，返回null。");
                     return null;
                 }
 
