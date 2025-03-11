@@ -39,11 +39,22 @@ namespace Entity.Base
             return Health;
         }
 
+        public void OnUpdate(Transform cameraTransform)
+        {
+            LookAt(cameraTransform);
+            Die();
+        }
+
         public virtual void Die()
         {
             //这玩意应该扔具体实现里
             /*if (Health <= 0)
                 PoolManager.Release("EnemyPool",this);*/
+        }
+
+        public void LookAt(Transform target)
+        {
+            transform.LookAt(target);
         }
 
         public void GetHurt()

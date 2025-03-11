@@ -33,13 +33,13 @@ namespace Manager
         {
             if (viewPoint == ViewPoint.TopDown)
             {
-                transform.position = Vector3.SmoothDamp(transform.position, _topDownPosition,ref _posVelocity,1f);
-                transform.eulerAngles = Vector3.SmoothDamp(transform.eulerAngles, _topDownRotation,ref _rotVelocity,1f);
+                transform.position = Vector3.SmoothDamp(transform.position, _topDownPosition,ref _posVelocity,0.5f);
+                transform.eulerAngles = Vector3.SmoothDamp(transform.eulerAngles, _topDownRotation,ref _rotVelocity,0.5f);
             }
             else
             {
-                transform.position = Vector3.SmoothDamp(transform.position, _sidePosition,ref _posVelocity,1f);
-                transform.eulerAngles = Vector3.SmoothDamp(transform.eulerAngles, _sideRotation,ref _rotVelocity,1f);
+                transform.position = Vector3.SmoothDamp(transform.position, _sidePosition,ref _posVelocity,0.5f);
+                transform.eulerAngles = Vector3.SmoothDamp(transform.eulerAngles, _sideRotation,ref _rotVelocity,0.5f);
             }
         }
     }
