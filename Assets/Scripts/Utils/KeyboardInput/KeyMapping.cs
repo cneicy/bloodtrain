@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Utils.KeyboardInput
 {
-    [System.Serializable]
+    [Serializable]
     public class KeyMapping
     {
         public string actionName;

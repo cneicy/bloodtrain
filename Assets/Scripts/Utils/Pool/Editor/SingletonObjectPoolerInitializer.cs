@@ -18,7 +18,7 @@ namespace Utils.Pool.Editor
             {
                 if (!type.IsSubclassOf(typeof(MonoBehaviour)) || !type.BaseType.IsGenericType ||
                     type.BaseType.GetGenericTypeDefinition() != typeof(SingletonObjectPool<>)) continue;
-                var existingInstances = UnityEngine.Object.FindObjectsOfType(type);
+                var existingInstances = Object.FindObjectsOfType(type);
                 if (existingInstances.Length != 0) continue;
                 var obj = new GameObject(type.Name);
                 obj.AddComponent(type);

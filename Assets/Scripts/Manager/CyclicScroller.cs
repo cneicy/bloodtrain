@@ -5,8 +5,8 @@ namespace Manager
 {
     public class CyclicScroller : MonoBehaviour
     {
-        [Header("Sprite Settings")] 
-        public Transform[] sprites = new Transform[5];
+        [Header("Sprite Settings")] public Transform[] sprites = new Transform[5];
+
         public float scrollSpeed = 1f;
 
         private float _spriteWidth;
@@ -16,7 +16,7 @@ namespace Manager
         {
             var sr = sprites[0].GetComponent<SpriteRenderer>();
             _spriteWidth = sr.bounds.size.x;
-            
+
             var startPos = sprites[0].position;
 
             sprites[1].position = startPos - new Vector3(_spriteWidth, 0, 0);
@@ -27,14 +27,11 @@ namespace Manager
 
         private void Update()
         {
-            foreach (var sprite in sprites)
-            {
-                sprite.Translate(Vector3.left * (scrollSpeed * Time.deltaTime));
-            }
-            
+            foreach (var sprite in sprites) sprite.Translate(Vector3.left * (scrollSpeed * Time.deltaTime));
+
             var leftmost = sprites.OrderBy(s => s.position.x).First();
 
-            
+
             if (!(leftmost.position.x < -_spriteWidth * 2)) return;
             var newPos = new Vector3(
                 _spriteWidth * 3,

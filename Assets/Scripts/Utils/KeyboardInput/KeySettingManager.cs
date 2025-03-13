@@ -10,6 +10,7 @@ namespace Utils.KeyboardInput
     {
         // 存储所有键位映射
         public List<KeyMapping> keyMappings = new();
+
         // 文件路径，用于保存和加载键位设置
         public string filePath;
 
@@ -21,7 +22,26 @@ namespace Utils.KeyboardInput
         {
             base.Awake();
             filePath = Path.Combine(Application.persistentDataPath, "KeySetting.json");
-            LoadKeySettings();  // 加载键位设置
+            LoadKeySettings(); // 加载键位设置
+        }
+
+        // 每帧更新方向，基于键盘输入
+        private void Update()
+        {
+            float horizontal = 0;
+            float vertical = 0;
+
+            if (Input.GetKey(GetKey("Left")))
+                horizontal = -1;
+            else if (Input.GetKey(GetKey("Right")))
+                horizontal = 1;
+
+            if (Input.GetKey(GetKey("Up")))
+                vertical = 1;
+            else if (Input.GetKey(GetKey("Down")))
+                vertical = -1;
+
+            Direction = new Vector2(horizontal, vertical);
         }
 
         // 加载键位设置，如果不存在则创建默认配置
@@ -43,7 +63,7 @@ namespace Utils.KeyboardInput
                     new("Up", KeyCode.W),
                     new("Down", KeyCode.S)
                 };
-                SaveKeySettings();  // 保存默认设置
+                SaveKeySettings(); // 保存默认设置
             }
         }
 
@@ -66,26 +86,7 @@ namespace Utils.KeyboardInput
             var mapping = keyMappings.FirstOrDefault(m => m.actionName == actionName);
             if (mapping == null) return;
             mapping.keyCode = newKeyCode;
-            SaveKeySettings();  // 保存更新后的设置
-        }
-
-        // 每帧更新方向，基于键盘输入
-        private void Update()
-        {
-            float horizontal = 0;
-            float vertical = 0;
-
-            if (Input.GetKey(GetKey("Left")))
-                horizontal = -1;
-            else if (Input.GetKey(GetKey("Right")))
-                horizontal = 1;
-
-            if (Input.GetKey(GetKey("Up")))
-                vertical = 1;
-            else if (Input.GetKey(GetKey("Down")))
-                vertical = -1;
-
-            Direction = new Vector2(horizontal, vertical);
+            SaveKeySettings(); // 保存更新后的设置
         }
     }
 }

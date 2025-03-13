@@ -6,30 +6,12 @@ namespace Utils.Pool
 {
     public class SingletonObjectPool<T> : MonoBehaviour where T : MonoBehaviour
     {
-        #region 单例
-
-        private static SingletonObjectPool<T> _instance;
-
-        public static SingletonObjectPool<T> Instance
-        {
-            get
-            {
-                if (_instance) return _instance;
-                _instance = FindObjectOfType<SingletonObjectPool<T>>();
-                if (_instance) return _instance;
-                var obj = new GameObject(typeof(SingletonObjectPool<T>).Name);
-                _instance = obj.AddComponent<SingletonObjectPool<T>>();
-                return _instance;
-            }
-        }
-
-        #endregion
+        private Queue<T> _activeObjects;
+        private int _maxActiveObjects;
 
 
         private ObjectPool<T> _pool;
         private T _prefab;
-        private Queue<T> _activeObjects;
-        private int _maxActiveObjects;
 
         public void Init(T prefab, int defaultCapacity = 1, int maxSize = 10)
         {
@@ -99,5 +81,24 @@ namespace Utils.Pool
             temp.transform.position = parent.position;
             return temp;
         }
+
+        #region 单例
+
+        private static SingletonObjectPool<T> _instance;
+
+        public static SingletonObjectPool<T> Instance
+        {
+            get
+            {
+                if (_instance) return _instance;
+                _instance = FindObjectOfType<SingletonObjectPool<T>>();
+                if (_instance) return _instance;
+                var obj = new GameObject(typeof(SingletonObjectPool<T>).Name);
+                _instance = obj.AddComponent<SingletonObjectPool<T>>();
+                return _instance;
+            }
+        }
+
+        #endregion
     }
 }

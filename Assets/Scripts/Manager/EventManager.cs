@@ -18,28 +18,21 @@ namespace Manager
         public void RegisterEvent<T>(string eventName, Func<T, object> handler)
         {
             if (!_eventHandlers.TryAdd(eventName, handler))
-            {
                 _eventHandlers[eventName] = Delegate.Combine(_eventHandlers[eventName], handler);
-            }
         }
 
         // 注销事件处理程序
         public void UnregisterEvent<T>(string eventName, Func<T, object> handler)
         {
             if (_eventHandlers.ContainsKey(eventName))
-            {
                 _eventHandlers[eventName] = Delegate.Remove(_eventHandlers[eventName], handler);
-            }
         }
 
         // 触发事件并返回结果（带返回值版本，支持多个参数）
         public object TriggerEvent<T>(string eventName, T args)
         {
             if (!_eventHandlers.TryGetValue(eventName, out var eventHandler)) return null;
-            if (eventHandler is Func<T, object> handler)
-            {
-                return handler(args);
-            }
+            if (eventHandler is Func<T, object> handler) return handler(args);
 
             return null;
         }
@@ -67,18 +60,12 @@ namespace Manager
 
                 // 遍历并移除与目标对象相关的处理程序
                 foreach (var handler in handlers)
-                {
                     if (handler.Target == targetObject)
-                    {
                         _eventHandlers[eventName] = Delegate.Remove(_eventHandlers[eventName], handler);
-                    }
-                }
 
                 // 检查并移除空的事件
                 if (_eventHandlers[eventName] == null || _eventHandlers[eventName].GetInvocationList().Length == 0)
-                {
                     _eventHandlers.Remove(eventName);
-                }
             }
 
             Debug.Log($"已为 {targetObject} 注销所有事件订阅。");
@@ -108,9 +95,7 @@ namespace Manager
                         typeof(Func<,>).MakeGenericType(method.GetParameters()[0].ParameterType, method.ReturnType),
                         target, method);
                     if (!_eventHandlers.TryAdd(eventName, handler))
-                    {
                         _eventHandlers[eventName] = Delegate.Combine(_eventHandlers[eventName], handler);
-                    }
                 }
             }
         }
@@ -120,11 +105,11 @@ namespace Manager
     [AttributeUsage(AttributeTargets.Method)]
     public class EventSubscribeAttribute : Attribute
     {
-        public string EventName { get; }
-
         public EventSubscribeAttribute(string eventName)
         {
             EventName = eventName;
         }
+
+        public string EventName { get; }
     }
 }

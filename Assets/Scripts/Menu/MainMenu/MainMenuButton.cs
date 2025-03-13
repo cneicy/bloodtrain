@@ -16,10 +16,9 @@ namespace Menu.MainMenu
         [UsedImplicitly]
         public void GameQuit()
         {
-            if(Application.isEditor)
+            if (Application.isEditor)
                 EditorApplication.isPlaying = false;
             Application.Quit();
         }
     }
 }
-

@@ -7,9 +7,9 @@ namespace Entity.Base
 {
     public abstract class EntityBase : MonoBehaviour, IEntity
     {
+        private Vector3 _tracePosition;
         public int Health { get; set; }
         public float Speed { get; set; }
-        private Vector3 _tracePosition;
 
         private void OnEnable()
         {
@@ -23,6 +23,23 @@ namespace Entity.Base
             EventManager.Instance.UnregisterAllEventsForObject(this);
             //EntityManager.Instance.Entities.Remove(this);
             EventManager.Instance.TriggerEvent("EntityDie", this);
+        }
+
+        public virtual void Die()
+        {
+            //这玩意应该扔具体实现里
+            /*if (Health <= 0)
+                PoolManager.Release("EnemyPool",this);*/
+        }
+
+        public void GetHurt()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Attack(int damage)
+        {
+            throw new NotImplementedException();
         }
 
         [EventSubscribe("TracePositionChange")]
@@ -42,29 +59,13 @@ namespace Entity.Base
         public void OnUpdate(Transform cameraTransform)
         {
             LookAt(cameraTransform);
+            transform.Translate(_tracePosition);
             Die();
-        }
-
-        public virtual void Die()
-        {
-            //这玩意应该扔具体实现里
-            /*if (Health <= 0)
-                PoolManager.Release("EnemyPool",this);*/
         }
 
         public void LookAt(Transform target)
         {
             transform.LookAt(target);
-        }
-
-        public void GetHurt()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Attack(int damage)
-        {
-            throw new NotImplementedException();
         }
     }
 }

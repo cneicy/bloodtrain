@@ -1,7 +1,5 @@
-﻿using System;
-using Manager;
+﻿using Manager;
 using UnityEngine;
-using Utils.KeyboardInput;
 
 namespace Entity
 {
@@ -10,13 +8,13 @@ namespace Entity
         [SerializeField] private Vector3 firstPosition;
         [SerializeField] private Vector3 secondPosition;
         [SerializeField] private Vector3 thirdPosition;
-        private Vector2 _direction;
+
         public Vector3 NowPosition { get; set; }
 
         private void Update()
         {
-            _direction = KeySettingManager.Instance.Direction;
-            
+            //todo:使用最新最热的输入控制器
+            if (Input.GetKeyDown(KeyCode.A)) NowPosition = firstPosition;
         }
 
         private void ChangePosition()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
+using Object = UnityEngine.Object;
 
 namespace Manager
 {
@@ -15,14 +16,12 @@ namespace Manager
 
     public class GameObjectPool<T> : IObjectPool, IDisposable where T : MonoBehaviour
     {
-        private readonly ObjectPool<T> _pool;
-        private readonly T _prefab;
-        private readonly Transform _poolRoot;
         private readonly Queue<T> _activeObjects = new();
         private readonly List<T> _allCreatedObjects = new();
         private readonly int _maxActiveObjects;
-
-        public Type ObjectType => typeof(T);
+        private readonly ObjectPool<T> _pool;
+        private readonly Transform _poolRoot;
+        private readonly T _prefab;
 
         public GameObjectPool(T prefab, Transform poolRoot, int defaultCapacity = 10, int maxSize = 20)
         {
@@ -44,9 +43,37 @@ namespace Manager
             );
         }
 
+        public void Dispose()
+        {
+            // 强制回收所有活跃对象
+            while (_activeObjects.Count > 0)
+            {
+                var obj = _activeObjects.Dequeue();
+                _pool.Release(obj);
+            }
+
+            // 销毁所有已创建对象
+            foreach (var obj in _allCreatedObjects.ToArray()) OnDestroyPoolObject(obj);
+
+            _allCreatedObjects.Clear();
+            _pool?.Dispose();
+        }
+
+        public Type ObjectType => typeof(T);
+
+        MonoBehaviour IObjectPool.Get(Transform parent)
+        {
+            return Get(parent);
+        }
+
+        void IObjectPool.Release(MonoBehaviour obj)
+        {
+            Release(obj as T);
+        }
+
         private T CreatePooledItem()
         {
-            var instance = UnityEngine.Object.Instantiate(_prefab, _poolRoot);
+            var instance = Object.Instantiate(_prefab, _poolRoot);
             instance.gameObject.SetActive(false);
             _allCreatedObjects.Add(instance);
             return instance;
@@ -68,10 +95,7 @@ namespace Manager
         private void OnDestroyPoolObject(T obj)
         {
             _allCreatedObjects.Remove(obj);
-            if (obj != null)
-            {
-                UnityEngine.Object.Destroy(obj.gameObject);
-            }
+            if (obj != null) Object.Destroy(obj.gameObject);
         }
 
         private void MaintainActiveObjectsLimit()
@@ -91,29 +115,10 @@ namespace Manager
             return item;
         }
 
-        public void Release(T obj) => _pool.Release(obj);
-
-        public void Dispose()
+        public void Release(T obj)
         {
-            // 强制回收所有活跃对象
-            while (_activeObjects.Count > 0)
-            {
-                var obj = _activeObjects.Dequeue();
-                _pool.Release(obj);
-            }
-
-            // 销毁所有已创建对象
-            foreach (var obj in _allCreatedObjects.ToArray())
-            {
-                OnDestroyPoolObject(obj);
-            }
-
-            _allCreatedObjects.Clear();
-            _pool?.Dispose();
+            _pool.Release(obj);
         }
-
-        MonoBehaviour IObjectPool.Get(Transform parent) => Get(parent);
-        void IObjectPool.Release(MonoBehaviour obj) => Release(obj as T);
     }
 
     public static class PoolManager
@@ -127,12 +132,12 @@ namespace Manager
             {
                 if (_poolRoot != null) return _poolRoot;
                 _poolRoot = new GameObject("PoolManager").transform;
-                UnityEngine.Object.DontDestroyOnLoad(_poolRoot);
+                Object.DontDestroyOnLoad(_poolRoot);
                 return _poolRoot;
             }
         }
 
-        public static void CreatePool<T>(string poolId, T prefab, int defaultCapacity = 10, int maxSize = 20) 
+        public static void CreatePool<T>(string poolId, T prefab, int defaultCapacity = 10, int maxSize = 20)
             where T : MonoBehaviour
         {
             if (string.IsNullOrEmpty(poolId))
@@ -158,7 +163,7 @@ namespace Manager
             catch (Exception ex)
             {
                 Debug.LogError($"创建对象池失败: {ex.Message}。");
-                UnityEngine.Object.Destroy(container.gameObject);
+                Object.Destroy(container.gameObject);
             }
         }
 
@@ -173,7 +178,6 @@ namespace Manager
             if (pool.ObjectType == typeof(T)) return pool.Get(parent ?? PoolRoot) as T;
             Debug.LogError($"类型不匹配: 请求的 {typeof(T)} 但池包含 {pool.ObjectType}。");
             return null;
-
         }
 
         public static void Release<T>(string poolId, T obj) where T : MonoBehaviour
@@ -199,16 +203,10 @@ namespace Manager
 
             try
             {
-                if (pool is IDisposable disposablePool)
-                {
-                    disposablePool.Dispose();
-                }
+                if (pool is IDisposable disposablePool) disposablePool.Dispose();
 
                 var container = PoolRoot.Find($"{poolId}_Container");
-                if (container != null)
-                {
-                    UnityEngine.Object.Destroy(container.gameObject);
-                }
+                if (container != null) Object.Destroy(container.gameObject);
             }
             finally
             {
@@ -218,10 +216,7 @@ namespace Manager
 
         public static void DisposeAllPools()
         {
-            foreach (var poolId in _pools.Keys.ToArray())
-            {
-                DisposePool(poolId);
-            }
+            foreach (var poolId in _pools.Keys.ToArray()) DisposePool(poolId);
         }
     }
 }

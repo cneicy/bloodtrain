@@ -1,12 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Menu.PauseMenu
 {
     public class PauseMenu : MonoBehaviour
     {
-        
         private void OnEnable()
         {
             Time.timeScale = 0;

@@ -8,19 +8,20 @@ namespace Manager
 {
     public class EntityManager : Singleton<EntityManager>
     {
-        public List<EntityBase> Entities { get; set; } = new();
         private GameObject _cameraobj;
-        [EventSubscribe("EntitySpawn")]
-        public object AddToEntityList(EntityBase entity)
+        public List<EntityBase> Entities { get; set; } = new();
+
+        private void FixedUpdate()
         {
-            Entities.Add(entity);
-            return null;
-        }
-        [EventSubscribe("EntityDie")]
-        public object RemoveFromEntityList(EntityBase entity)
-        {
-            Entities.Remove(entity);
-            return null;
+            if (Entities.Count <= 0) return;
+            try
+            {
+                Entities.ForEach(entity => entity.OnUpdate(_cameraobj.transform));
+            }
+            catch (Exception)
+            {
+                Debug.LogWarning("实体列表被修改");
+            }
         }
 
         private void OnEnable()
@@ -34,17 +35,18 @@ namespace Manager
             EventManager.Instance.UnregisterAllEventsForObject(this);
         }
 
-        private void FixedUpdate()
+        [EventSubscribe("EntitySpawn")]
+        public object AddToEntityList(EntityBase entity)
         {
-            if (Entities.Count <= 0) return;
-            try
-            {
-                Entities.ForEach(entity => entity.OnUpdate(_cameraobj.transform));
-            }
-            catch (Exception)
-            {
-                Debug.LogWarning("实体列表被修改");
-            }
+            Entities.Add(entity);
+            return null;
+        }
+
+        [EventSubscribe("EntityDie")]
+        public object RemoveFromEntityList(EntityBase entity)
+        {
+            Entities.Remove(entity);
+            return null;
         }
     }
 }

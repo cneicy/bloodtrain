@@ -51,12 +51,12 @@ namespace Utils
             }
         }
 
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
             _isShuttingDown = true;
         }
 
-        private void OnDestroy()
+        private void OnApplicationQuit()
         {
             _isShuttingDown = true;
         }
