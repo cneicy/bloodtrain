@@ -6,12 +6,12 @@ namespace Manager
 {
     public class GameManager : Singleton<GameManager>
     {
-        [SerializeField] private TestEnemy _playerPrefab;
+        [SerializeField] private TestEnemy enemyPrefab;
 
         private void Start()
         {
-            PoolManager.CreatePool("Enemy", _playerPrefab);
-            PoolManager.Get<TestEnemy>("Enemy").Health = 100;
+            PoolManager.CreatePool("Enemy", enemyPrefab);
+            PoolManager.Get<TestEnemy>("Enemy");
         }
     }
 }

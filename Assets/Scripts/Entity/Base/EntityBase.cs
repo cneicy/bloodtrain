@@ -8,20 +8,37 @@ namespace Entity.Base
     public abstract class EntityBase : MonoBehaviour, IEntity
     {
         private Vector3 _tracePosition;
-        public int Health { get; set; }
-        public float Speed { get; set; }
+        [SerializeField] private int health;
+        [SerializeField] private float speed;
 
-        private void OnEnable()
+        public int Health
+        {
+            get => health;
+            set => health = value;
+        }
+
+        public float Speed
+        {
+            get => speed;
+            set => speed = value;
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.TryGetComponent(out SpeedArea speedArea))
+            {
+            }
+        }
+
+        protected virtual void OnEnable()
         {
             EventManager.Instance.RegisterEventHandlersFromAttributes(this);
-            //EntityManager.Instance.Entities.Add(this);
             EventManager.Instance.TriggerEvent("EntitySpawn", this);
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             EventManager.Instance.UnregisterAllEventsForObject(this);
-            //EntityManager.Instance.Entities.Remove(this);
             EventManager.Instance.TriggerEvent("EntityDie", this);
         }
 
@@ -59,7 +76,8 @@ namespace Entity.Base
         public void OnUpdate(Transform cameraTransform)
         {
             LookAt(cameraTransform);
-            transform.Translate(_tracePosition);
+            transform.position = Vector3.MoveTowards(transform.position, _tracePosition, Speed * Time.deltaTime);
+            Debug.Log(_tracePosition);
             Die();
         }
 
