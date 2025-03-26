@@ -4,18 +4,30 @@ using Manager;
 using UnityEditor;
 using UnityEngine;
 
-namespace Menu
+namespace UI
 {
     public class Menu : MonoBehaviour
     {
         [SerializeField] private GameObject mainMenu;
+        [SerializeField] private GameObject pauseMenu;
 
-        [UsedImplicitly]
         public void GameStart()
         {
-            //todo:其它manager接入GameStart事件
-            EventManager.Instance.TriggerEvent<object>("GameStart", null);
+            EventManager.Instance.TriggerEvent("GameStart", this);
             mainMenu.SetActive(false);
+        }
+
+        private void Awake()
+        {
+            pauseMenu.SetActive(false);
+        }
+
+        private void FixedUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) && !mainMenu.activeSelf && !pauseMenu.activeSelf)
+            {
+                Pause();
+            }
         }
 
         //todo:等待保存功能完成后调用
@@ -23,18 +35,19 @@ namespace Menu
         {
             throw new NotImplementedException();
         }
-        
+
         public void Resume()
         {
             Time.timeScale = 1;
-            gameObject.SetActive(false);
+            pauseMenu.SetActive(false);
         }
 
         public void Pause()
         {
             Time.timeScale = 0;
-            throw new NotImplementedException();
+            pauseMenu.SetActive(true);
         }
+
         [UsedImplicitly]
         public void GameQuit()
         {
