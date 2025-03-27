@@ -14,10 +14,9 @@ namespace Manager
         void Release(MonoBehaviour obj);
     }
 
-    public class GameObjectPool<T> : IObjectPool, IDisposable where T : MonoBehaviour
+    public class GameObjectPool<T> : IObjectPool where T : MonoBehaviour
     {
-        private readonly Queue<T> _activeObjects = new();
-        private readonly List<T> _allCreatedObjects = new();
+        private readonly List<T> _activeObjects = new();
         private readonly int _maxActiveObjects;
         private readonly ObjectPool<T> _pool;
         private readonly Transform _poolRoot;
@@ -43,21 +42,6 @@ namespace Manager
             );
         }
 
-        public void Dispose()
-        {
-            // 强制回收所有活跃对象
-            while (_activeObjects.Count > 0)
-            {
-                var obj = _activeObjects.Dequeue();
-                _pool.Release(obj);
-            }
-
-            // 销毁所有已创建对象
-            foreach (var obj in _allCreatedObjects.ToArray()) OnDestroyPoolObject(obj);
-
-            _allCreatedObjects.Clear();
-            _pool?.Dispose();
-        }
 
         public Type ObjectType => typeof(T);
 
@@ -75,34 +59,34 @@ namespace Manager
         {
             var instance = Object.Instantiate(_prefab, _poolRoot);
             instance.gameObject.SetActive(false);
-            _allCreatedObjects.Add(instance);
             return instance;
         }
 
         private void OnTakeFromPool(T obj)
         {
             obj.gameObject.SetActive(true);
+            _activeObjects.Add(obj);
             MaintainActiveObjectsLimit();
-            _activeObjects.Enqueue(obj);
         }
 
         private void OnReturnedToPool(T obj)
         {
             obj.gameObject.SetActive(false);
             obj.transform.SetParent(_poolRoot);
+            _activeObjects.Remove(obj);
         }
 
         private void OnDestroyPoolObject(T obj)
         {
-            _allCreatedObjects.Remove(obj);
             if (obj != null) Object.Destroy(obj.gameObject);
         }
 
         private void MaintainActiveObjectsLimit()
         {
-            while (_activeObjects.Count >= _maxActiveObjects)
+            while (_activeObjects.Count > _maxActiveObjects)
             {
-                var oldest = _activeObjects.Dequeue();
+                var oldest = _activeObjects[0];
+                _activeObjects.RemoveAt(0);
                 _pool.Release(oldest);
             }
         }

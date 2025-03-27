@@ -7,9 +7,10 @@ namespace Entity.Base
 {
     public abstract class EntityBase : MonoBehaviour, IEntity
     {
-        private Vector3 _tracePosition;
+        protected Vector3 TracePosition;
         [SerializeField] private int health;
         [SerializeField] private float speed;
+        private float _speed;
 
         public int Health
         {
@@ -19,16 +20,10 @@ namespace Entity.Base
 
         public float Speed
         {
-            get => speed;
-            set => speed = value;
+            get => _speed;
+            set => _speed = value;
         }
 
-        private void OnCollisionEnter(Collision other)
-        {
-            if (other.gameObject.TryGetComponent(out SpeedArea speedArea))
-            {
-            }
-        }
 
         protected virtual void OnEnable()
         {
@@ -38,6 +33,7 @@ namespace Entity.Base
 
         protected virtual void OnDisable()
         {
+            if (!EventManager.Instance) return;
             EventManager.Instance.UnregisterAllEventsForObject(this);
             EventManager.Instance.TriggerEvent("EntityDie", this);
         }
@@ -62,7 +58,7 @@ namespace Entity.Base
         [EventSubscribe("TracePositionChange")]
         public object TracePositionChange(Vector3 position)
         {
-            _tracePosition = position;
+            TracePosition = position;
             return this;
         }
 
@@ -73,11 +69,12 @@ namespace Entity.Base
             return Health;
         }
 
-        public void OnUpdate(Transform cameraTransform)
+        public virtual void OnUpdate(Transform cameraTransform)
         {
             LookAt(cameraTransform);
-            transform.position = Vector3.MoveTowards(transform.position, _tracePosition, Speed * Time.deltaTime);
-            Debug.Log(_tracePosition);
+            transform.position = transform.position.x - TracePosition.x > 0
+                ? Vector3.MoveTowards(transform.position, TracePosition, Speed * 1.5f * Time.deltaTime)
+                : Vector3.MoveTowards(transform.position, TracePosition, Speed * 0.5f * Time.deltaTime);
             Die();
         }
 

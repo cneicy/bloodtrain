@@ -93,7 +93,10 @@ namespace Manager
                 }
             }
 
-            private void OnApplicationQuit() => ForceSave();
+            private void OnApplicationQuit()
+            {
+                ForceSave();
+            }
 
             #endregion
 
@@ -254,7 +257,6 @@ namespace Manager
             private bool TryGetValue<T>(string key, out T value)
             {
                 if (_currentData.TryGetValue(key, out var rawValue))
-                {
                     try
                     {
                         value = (T)Convert.ChangeType(rawValue, typeof(T));
@@ -265,7 +267,6 @@ namespace Manager
                         value = default;
                         return false;
                     }
-                }
 
                 value = default;
                 return false;
@@ -282,20 +283,31 @@ namespace Manager
                 });
             }
 
-            private string GetSaveDirectory() => Path.Combine(
-                Application.persistentDataPath,
-                SaveFolder
-            );
+            private string GetSaveDirectory()
+            {
+                return Path.Combine(
+                    Application.persistentDataPath,
+                    SaveFolder
+                );
+            }
 
-            private string GetCurrentSlotPath() => GetSlotPath(_currentSlot);
+            private string GetCurrentSlotPath()
+            {
+                return GetSlotPath(_currentSlot);
+            }
 
-            private string GetSlotPath(string slotName) => Path.Combine(
-                GetSaveDirectory(),
-                $"{slotName}.sav"
-            );
+            private string GetSlotPath(string slotName)
+            {
+                return Path.Combine(
+                    GetSaveDirectory(),
+                    $"{slotName}.sav"
+                );
+            }
 
-            private bool SlotExists(string slotName) =>
-                File.Exists(GetSlotPath(slotName));
+            private bool SlotExists(string slotName)
+            {
+                return File.Exists(GetSlotPath(slotName));
+            }
 
             private void EnsureSaveDirectory()
             {
@@ -309,8 +321,15 @@ namespace Manager
                 EventManager.Instance.TriggerEvent(DataEvents.PlayerDataError, message);
             }
 
-            private void SetupAutoSave() => _saveTimer = AutoSaveInterval;
-            private void ResetSaveTimer() => _saveTimer = AutoSaveInterval;
+            private void SetupAutoSave()
+            {
+                _saveTimer = AutoSaveInterval;
+            }
+
+            private void ResetSaveTimer()
+            {
+                _saveTimer = AutoSaveInterval;
+            }
 
             #endregion
         }

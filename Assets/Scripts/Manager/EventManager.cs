@@ -48,6 +48,12 @@ namespace Manager
 
         public void UnregisterAllEventsForObject(object targetObject)
         {
+            if (targetObject is null)
+            {
+                Debug.Log("已销毁物体无法取消订阅。");
+                return;
+            }
+
             // 将事件名称存入列表以避免遍历时修改集合
             var eventNames = new List<string>(_eventHandlers.Keys);
 

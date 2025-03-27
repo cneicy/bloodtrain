@@ -10,8 +10,8 @@ namespace Manager
 
         private void Start()
         {
-            PoolManager.CreatePool("Enemy", enemyPrefab);
-            PoolManager.Get<TestEnemy>("Enemy");
+            /*PoolManager.CreatePool("Enemy", enemyPrefab);
+            PoolManager.Get<TestEnemy>("Enemy");*/
         }
     }
 }

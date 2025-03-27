@@ -32,6 +32,7 @@ namespace Manager
 
         private void OnDisable()
         {
+            if (!EventManager.Instance) return;
             EventManager.Instance.UnregisterAllEventsForObject(this);
         }
 

@@ -5,6 +5,5 @@ namespace Entity
 {
     public class Cannon : CannonBase
     {
-        
     }
 }

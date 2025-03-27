@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace Manager
@@ -11,6 +12,32 @@ namespace Manager
 
         private float _spriteWidth;
 
+        private void OnEnable()
+        {
+            EventManager.Instance.RegisterEventHandlersFromAttributes(this);
+        }
+
+        private void OnDisable()
+        {
+            if (!EventManager.Instance) return;
+            EventManager.Instance.UnregisterAllEventsForObject(this);
+        }
+
+        //todo:列车降速动态背景降速
+        [EventSubscribe("TrainSlowDown")]
+        public object OnTrainSlowDown(Object sender)
+        {
+            StartCoroutine(Slow());
+            return this;
+        }
+
+        //todo:列车降速
+        private IEnumerator Slow()
+        {
+            scrollSpeed *= 0.9f;
+            yield return new WaitForSeconds(1f);
+            scrollSpeed /= 0.9f;
+        }
 
         private void Awake()
         {

@@ -1,4 +1,6 @@
-﻿using Manager;
+﻿using System;
+using System.Collections;
+using Manager;
 using UnityEngine;
 
 namespace Entity
@@ -10,6 +12,11 @@ namespace Entity
         [SerializeField] private Vector3 rightPosition;
 
         public Vector3 NowPosition { get; set; }
+
+        private void Start()
+        {
+            StartCoroutine(Loop());
+        }
 
         private void Update()
         {
@@ -27,6 +34,15 @@ namespace Entity
                 if (NowPosition == leftPosition)
                     NowPosition = midPosition;
                 else if (NowPosition == midPosition) NowPosition = rightPosition;
+                ChangePosition();
+            }
+        }
+
+        private IEnumerator Loop()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(1);
                 ChangePosition();
             }
         }

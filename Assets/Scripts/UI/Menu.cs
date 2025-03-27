@@ -24,10 +24,7 @@ namespace UI
 
         private void FixedUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) && !mainMenu.activeSelf && !pauseMenu.activeSelf)
-            {
-                Pause();
-            }
+            if (Input.GetKeyDown(KeyCode.Escape) && !mainMenu.activeSelf && !pauseMenu.activeSelf) Pause();
         }
 
         //todo:等待保存功能完成后调用

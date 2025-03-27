@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-//todo:应用此模块
+
 namespace Manager
 {
     public enum ViewPoint
@@ -28,6 +28,7 @@ namespace Manager
 
         private void OnDisable()
         {
+            if (!EventManager.Instance) return;
             EventManager.Instance.UnregisterAllEventsForObject(this);
         }
 
@@ -41,13 +42,15 @@ namespace Manager
         {
             if (viewPoint == ViewPoint.TopDown)
             {
-                transform.position = Vector3.SmoothDamp(transform.position, _topDownPosition, ref _posVelocity, smoothTime);
+                transform.position =
+                    Vector3.SmoothDamp(transform.position, _topDownPosition, ref _posVelocity, smoothTime);
                 transform.eulerAngles =
                     Vector3.SmoothDamp(transform.eulerAngles, _topDownRotation, ref _rotVelocity, smoothTime);
             }
             else
             {
-                transform.position = Vector3.SmoothDamp(transform.position, _sidePosition, ref _posVelocity, smoothTime);
+                transform.position =
+                    Vector3.SmoothDamp(transform.position, _sidePosition, ref _posVelocity, smoothTime);
                 transform.eulerAngles =
                     Vector3.SmoothDamp(transform.eulerAngles, _sideRotation, ref _rotVelocity, smoothTime);
             }
@@ -61,11 +64,17 @@ namespace Manager
             yield return new WaitForSeconds(1.2f);
             smoothTime = 0.5f;
         }
+
         [EventSubscribe("GameStart")]
         public object SwitchViewPoint(Object obj)
         {
             StartCoroutine(CoolSwitch());
             return null;
+        }
+
+        public void SwitchViewPoint()
+        {
+            viewPoint = viewPoint == ViewPoint.Side ? ViewPoint.TopDown : ViewPoint.Side;
         }
     }
 }
