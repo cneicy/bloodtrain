@@ -7,7 +7,7 @@ namespace Manager
     public class CyclicScroller : MonoBehaviour
     {
         [Header("Sprite Settings")] public Transform[] sprites = new Transform[5];
-
+        public float failSpeed = 0.3f;
         public float scrollSpeed = 1f;
 
         private float _spriteWidth;
@@ -25,7 +25,7 @@ namespace Manager
 
         //todo:列车降速动态背景降速
         [EventSubscribe("TrainSlowDown")]
-        public object OnTrainSlowDown(Object sender)
+        public object OnTrainSlowDown(Object entity)
         {
             StartCoroutine(Slow());
             return this;
@@ -58,6 +58,10 @@ namespace Manager
 
             var leftmost = sprites.OrderBy(s => s.position.x).First();
 
+            if (scrollSpeed < failSpeed)
+            {
+                EventManager.Instance.TriggerEvent("GameFail", scrollSpeed);
+            }
 
             if (!(leftmost.position.x < -_spriteWidth * 2)) return;
             var newPos = new Vector3(

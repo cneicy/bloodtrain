@@ -10,6 +10,25 @@ namespace UI
     {
         [SerializeField] private GameObject mainMenu;
         [SerializeField] private GameObject pauseMenu;
+        [SerializeField] private GameObject failMenu;
+
+        private void OnEnable()
+        {
+            EventManager.Instance.RegisterEventHandlersFromAttributes(this);
+        }
+
+        private void OnDisable()
+        {
+            if (!EventManager.Instance) return;
+            EventManager.Instance.UnregisterAllEventsForObject(this);
+        }
+        
+        [EventSubscribe("GameFail")]
+        public object OnGameFail(float speed)
+        {
+            failMenu.SetActive(true);
+            return null;
+        }
 
         public void GameStart()
         {

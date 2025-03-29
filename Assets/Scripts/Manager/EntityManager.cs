@@ -36,6 +36,13 @@ namespace Manager
             EventManager.Instance.UnregisterAllEventsForObject(this);
         }
 
+        [EventSubscribe("GameFail")]
+        public object OnGameFail(float speed)
+        {
+            PoolManager.DisposePool("Enemy");
+            return null;
+        }
+
         [EventSubscribe("EntitySpawn")]
         public object AddToEntityList(EntityBase entity)
         {

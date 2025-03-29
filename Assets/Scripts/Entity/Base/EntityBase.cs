@@ -35,14 +35,14 @@ namespace Entity.Base
         {
             if (!EventManager.Instance) return;
             EventManager.Instance.UnregisterAllEventsForObject(this);
-            EventManager.Instance.TriggerEvent("EntityDie", this);
         }
 
         public virtual void Die()
         {
+            
             //这玩意应该扔具体实现里
-            /*if (Health <= 0)
-                PoolManager.Release("EnemyPool",this);*/
+            if (Health <= 0)
+                EventManager.Instance.TriggerEvent("EntityDie", this);
         }
 
         public void GetHurt()
@@ -60,6 +60,16 @@ namespace Entity.Base
         {
             TracePosition = position;
             return this;
+        }
+
+        [EventSubscribe("EntityCrash")]
+        public object OnEntityCrash(EntityBase entity)
+        {
+            if (entity == this)
+            {
+                Health=0;
+            }
+            return null;
         }
 
         // todo:此处参数应该为IAttack之类的可获取伤害的对象

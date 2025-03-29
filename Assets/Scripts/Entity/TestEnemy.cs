@@ -25,13 +25,13 @@ namespace Entity
             base.OnUpdate(cameraTransform);
             _spriteRenderer.flipX = !(transform.position.x - TracePosition.x > 0);
         }
+        
 
         public override void Die()
         {
             base.Die();
             if (Health > 0) return;
             PoolManager.Release("Enemy", this);
-            print("Die");
         }
     }
 }
