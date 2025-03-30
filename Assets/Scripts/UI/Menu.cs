@@ -27,6 +27,7 @@ namespace UI
         public object OnGameFail(float speed)
         {
             failMenu.SetActive(true);
+            Time.timeScale = 0;
             return null;
         }
 

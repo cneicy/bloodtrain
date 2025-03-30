@@ -3,7 +3,6 @@ using Manager;
 using UnityEngine;
 using Utils;
 
-//todo:对象池暂不支持传入抽象类以释放子类且外部Release后不会回到设定的transform上
 namespace Entity
 {
     public class MonsterSpawner : Singleton<MonsterSpawner>
@@ -27,7 +26,7 @@ namespace Entity
         [EventSubscribe("GameStart")]
         public object OnGameStart(Object obj)
         {
-            PoolManager.CreatePool("Enemy", enemyPrefab, 100, 200);
+            PoolManager.CreatePool("Enemy", enemyPrefab, 100, 2000);
             StartCoroutine(SpawnEnemiesCoroutine());
             return null;
         }

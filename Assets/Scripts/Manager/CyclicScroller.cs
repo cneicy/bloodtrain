@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
+using Entity;
 using UnityEngine;
 
 namespace Manager
@@ -9,7 +10,7 @@ namespace Manager
         [Header("Sprite Settings")] public Transform[] sprites = new Transform[5];
         public float failSpeed = 0.3f;
         public float scrollSpeed = 1f;
-
+        public int lowFuelTime;
         private float _spriteWidth;
 
         private void OnEnable()
@@ -25,19 +26,36 @@ namespace Manager
 
         //todo:列车降速动态背景降速
         [EventSubscribe("TrainSlowDown")]
-        public object OnTrainSlowDown(Object entity)
+        public object OnTrainSlowDown(Train sender)
         {
             StartCoroutine(Slow());
             return this;
         }
 
-        //todo:列车降速
+        [EventSubscribe("TrainLowFuel")]
+        public object OnTrainLowFuel(Train sender)
+        {
+            scrollSpeed *= 0.9f;
+            lowFuelTime++;
+            return this;
+        }
+        [EventSubscribe("TrainEnoughFuel")]
+        public object OnTrainEnoughFuel(Train sender)
+        {
+            for (var i = lowFuelTime; i > 0; i--)
+            {
+                scrollSpeed /= 0.9f;
+            }
+            return this;
+        }
+        
         private IEnumerator Slow()
         {
             scrollSpeed *= 0.9f;
             yield return new WaitForSeconds(1f);
             scrollSpeed /= 0.9f;
         }
+        
 
         private void Awake()
         {

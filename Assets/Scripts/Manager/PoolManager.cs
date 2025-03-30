@@ -52,7 +52,14 @@ namespace Manager
 
         void IObjectPool.Release(MonoBehaviour obj)
         {
-            Release(obj as T);
+            if (obj is T target)
+            {
+                Release(target);
+            }
+            else
+            {
+                Debug.LogError($"无法将类型 {obj.GetType()} 转换为 {typeof(T)}");
+            }
         }
 
         private T CreatePooledItem()
@@ -164,17 +171,16 @@ namespace Manager
             return null;
         }
 
-        public static void Release<T>(string poolId, T obj) where T : MonoBehaviour
+        public static void Release(string poolId, MonoBehaviour obj)
         {
             if (!_pools.TryGetValue(poolId, out var pool))
             {
                 Debug.LogError($"对象池 '{poolId}' 不存在。");
                 return;
             }
-
-            if (pool.ObjectType != typeof(T))
+            if (obj.GetType() != pool.ObjectType)
             {
-                Debug.LogError($"类型不匹配: 尝试释放 {typeof(T)} 到包含 {pool.ObjectType} 的池。");
+                Debug.LogError($"类型不匹配: 尝试释放 {obj.GetType()} 到包含 {pool.ObjectType} 的池");
                 return;
             }
 

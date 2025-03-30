@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1424308561215368147}
   - component: {fileID: 5030535133025866426}
   - component: {fileID: 5083378911987867306}
+  - component: {fileID: 201533308705505021}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -56,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7a2600d6ea0da9f4db5e149a2ec46659, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
-  speed: 2
+  speed: 100
+  limitSpeed: 0.4
 --- !u!95 &5030535133025866426
 Animator:
   serializedVersion: 5
@@ -171,3 +173,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!75 &201533308705505021
+ConstantForce:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8767869709510943157}
+  m_Enabled: 1
+  m_Force: {x: -0.2, y: 0, z: 0}
+  m_RelativeForce: {x: 0, y: 0, z: 0}
+  m_Torque: {x: 0, y: 0, z: 0}
+  m_RelativeTorque: {x: 0, y: 0, z: 0}

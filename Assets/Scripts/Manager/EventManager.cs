@@ -29,12 +29,31 @@ namespace Manager
         }
 
         // 触发事件并返回结果（带返回值版本，支持多个参数）
-        public object TriggerEvent<T>(string eventName, T args)
+        public List<object> TriggerEvent<T>(string eventName, T args)
         {
-            if (!_eventHandlers.TryGetValue(eventName, out var eventHandler)) return null;
-            if (eventHandler is Func<T, object> handler) return handler(args);
+            if (!_eventHandlers.TryGetValue(eventName, out var eventHandler))
+                return new List<object>();
 
-            return null;
+            List<object> results = new List<object>();
+            foreach (Delegate handler in eventHandler.GetInvocationList())
+            {
+                if (handler is Func<T, object> typedHandler)
+                {
+                    try 
+                    {
+                        results.Add(typedHandler(args));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"执行事件 {eventName} 时发生异常: {ex}");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"事件 {eventName} 的处理程序类型不匹配");
+                }
+            }
+            return results;
         }
 
 
