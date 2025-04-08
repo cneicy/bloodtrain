@@ -102,6 +102,14 @@ namespace Manager
 
             #region 公开接口
 
+            /// <summary>
+            /// 获取指定键的数据值（若不存在则初始化默认值）
+            /// <para>触发事件：无</para>
+            /// <para>关联事件：PlayerDataUpdated（当其他方法修改数据时）</para>
+            /// </summary>
+            /// <param name="key">数据键名（大小写敏感）</param>
+            /// <param name="defaultValue">当数据不存在时初始化的默认值</param>
+            /// <returns>成功返回对应类型数据，失败返回默认值</returns>
             public T GetData<T>(string key, T defaultValue = default)
             {
                 if (TryGetValue(key, out T value)) return value;
@@ -109,6 +117,14 @@ namespace Manager
                 return defaultValue;
             }
 
+            /// <summary>
+            /// 设置指定键的数据值（立即触发数据更新事件）
+            /// <para>触发事件：PlayerDataUpdated → PlayerDataSaved（立即保存时）</para>
+            /// </summary>
+            /// <param name="key">数据键名（空值会被过滤）</param>
+            /// <param name="newValue">要设置的新值（支持任意可序列化类型）</param>
+            /// <param name="immediateSave">是否立即保存（默认仅重置自动保存计时器）</param>
+            /// <returns>当值实际发生变化时返回true</returns>
             public bool SetData<T>(string key, T newValue, bool immediateSave = false)
             {
                 if (string.IsNullOrEmpty(key)) return false;
@@ -125,6 +141,11 @@ namespace Manager
                 return true;
             }
 
+            /// <summary>
+            /// 创建存档槽
+            /// <param name="slotName">存档槽名</param>
+            /// <para>触发事件：PlayerSlotCreated</para>
+            /// </summary>
             public void CreateNewSlot(string slotName)
             {
                 if (SlotExists(slotName)) return;
@@ -134,6 +155,11 @@ namespace Manager
                 EventManager.Instance.TriggerEvent(DataEvents.SlotCreated, slotName);
             }
 
+            /// <summary>
+            /// 删除存档槽
+            /// <param name="slotName">存档槽名</param>
+            /// <para>触发事件：PlayerSlotDeleted</para>
+            /// </summary>
             public void DeleteSlot(string slotName)
             {
                 var path = GetSlotPath(slotName);
@@ -141,12 +167,20 @@ namespace Manager
                 EventManager.Instance.TriggerEvent(DataEvents.SlotDeleted, slotName);
             }
 
+            /// <summary>
+            /// 获取所有存档槽
+            /// </summary>
             public List<string> GetAllSlots()
             {
                 var files = Directory.GetFiles(GetSaveDirectory(), "*.sav");
                 return files.Select(Path.GetFileNameWithoutExtension).ToList();
             }
 
+            /// <summary>
+            /// 切换存档槽
+            /// <param name="slotName">存档槽名</param>
+            /// <para>触发事件：PlayerSlotChanged</para>
+            /// </summary>
             public void SwitchSlot(string slotName)
             {
                 if (_currentSlot == slotName) return;
@@ -157,6 +191,11 @@ namespace Manager
                 EventManager.Instance.TriggerEvent(DataEvents.SlotChanged, slotName);
             }
 
+            /// <summary>
+            /// 强制立即保存当前存档槽数据
+            /// <para>触发事件：PlayerDataSaved</para>
+            /// <para>关联错误：PlayerDataError（保存失败时）</para>
+            /// </summary>
             public void ForceSave()
             {
                 try
@@ -226,6 +265,7 @@ namespace Manager
 
             #region 私有方法
 
+            
             private void LoadCurrentSlot()
             {
                 try

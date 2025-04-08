@@ -1,7 +1,10 @@
 ﻿namespace Entity.Interface
 {
+    /// <summary>
+    /// 可受到攻击
+    /// </summary>
     public interface IHurtable
     {
-        void GetHurt();
+        int GetHurt(int damage);
     }
 }

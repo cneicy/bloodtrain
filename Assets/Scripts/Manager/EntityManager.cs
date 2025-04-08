@@ -6,6 +6,10 @@ using Utils;
 
 namespace Manager
 {
+    /// <summary>
+    /// 实体管理器
+    /// 原理是模仿ECS统一对实体行为进行调用管理
+    /// </summary>
     public class EntityManager : Singleton<EntityManager>
     {
         private GameObject _cameraobj;

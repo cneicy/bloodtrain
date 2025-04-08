@@ -4,13 +4,17 @@ using UnityEngine;
 
 namespace Entity
 {
+    /// <summary>
+    /// 追踪点
+    /// 敌人会追踪追踪点的位置进行移动
+    /// </summary>
     public class MoveableTracePoint : MonoBehaviour
     {
-        [SerializeField] private Vector3 leftPosition;
-        [SerializeField] private Vector3 midPosition;
-        [SerializeField] private Vector3 rightPosition;
+        [SerializeField] private Vector3 leftPosition;//左追踪点
+        [SerializeField] private Vector3 midPosition;//中追踪点
+        [SerializeField] private Vector3 rightPosition;//右追踪点
 
-        public Vector3 NowPosition { get; set; }
+        public Vector3 NowPosition { get; set; }//追踪点现在的位置
 
         private void Start()
         {
@@ -37,6 +41,9 @@ namespace Entity
             }
         }
 
+        /// <summary>
+        /// 每1s通知一次场景中的敌人当前追踪点的位置
+        /// </summary>
         private IEnumerator Loop()
         {
             while (true)
@@ -46,6 +53,10 @@ namespace Entity
             }
         }
 
+        /// <summary>
+        /// 触发追踪点改变事件
+        /// 用于更新场景内敌人的追踪位置
+        /// </summary>
         private void ChangePosition()
         {
             EventManager.Instance.TriggerEvent("TracePositionChange", NowPosition);
