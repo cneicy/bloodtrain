@@ -1,25 +1,23 @@
 ﻿using System.Collections;
+using Cinemachine;
 using UnityEngine;
 
 namespace Manager
 {
-    public enum ViewPoint //相机视角枚举类型
-    {
-        Side, //侧视角
-        TopDown //俯视角
-    }
-
     public class CameraManager : MonoBehaviour
     {
-        public ViewPoint viewPoint;
-        private readonly Vector3 _sidePosition = new(0, 1.2f, -10);//侧视角相机位置
-        private readonly Vector3 _sideRotation = new(6.2f, 0, 0);//侧视角相机欧拉角
-        private readonly Vector3 _topDownPosition = new(-4.96f, 6.47f, -10f);//俯视角相机位置
-        private readonly Vector3 _topDownRotation = new(29.35f, 24.71f, 0);//俯视角相机欧拉角
+        private Vector3 _posVelocity; //相机位移速度 SmoothDamp方法使用
+        private Vector3 _rotVelocity; //相机旋转速度 SmoothDamp方法使用
+        [SerializeField] private float limitFov;
+        [SerializeField] private CinemachineFreeLook freeLook;
+        [SerializeField] private CinemachineVirtualCamera firstPerson;
+        [SerializeField] private float mouseSensitivity = 300f;
+        [SerializeField] private CinemachinePOV cinemachinePov;
+        private bool _isFirstPerson;
+        private bool _canOp = true; //相机过渡冷却用
+        private float _xRotation;
+        private (float, float) _rotateSpeed; //Freelook拖动旋转用
         private Camera _camera;
-        public float smoothTime = 0.5f;//平滑时间
-        private Vector3 _posVelocity;//相机位移速度 SmoothDamp方法使用
-        private Vector3 _rotVelocity;//相机旋转速度 SmoothDamp方法使用
 
         private void OnEnable()
         {
@@ -34,60 +32,84 @@ namespace Manager
             EventManager.Instance.UnregisterAllEventsForObject(this);
         }
 
+        private IEnumerator CoolDown()
+        {
+            _canOp = false;
+            yield return new WaitForSeconds(1);
+            _canOp = true;
+        }
+
         private void Start()
         {
-            _camera = GetComponent<Camera>();
-            viewPoint = ViewPoint.TopDown;
+            _camera = Camera.main;
+            _rotateSpeed = (freeLook.m_XAxis.m_MaxSpeed, freeLook.m_YAxis.m_MaxSpeed);
+            freeLook.m_XAxis.m_MaxSpeed = 0;
+            freeLook.m_YAxis.m_MaxSpeed = 0;
+            cinemachinePov = FindObjectOfType<CinemachinePOV>().GetComponent<CinemachinePOV>();
+            cinemachinePov.m_HorizontalAxis.m_MaxSpeed = mouseSensitivity;
+            cinemachinePov.m_VerticalAxis.m_MaxSpeed = mouseSensitivity;
         }
 
         private void Update()
         {
-            //相机位移方法
-            if (viewPoint == ViewPoint.TopDown)
+            FreeLookToFirstPerson();
+            if (!_canOp) return;
+            DragToFreeLook();
+            FovScale();
+        }
+
+        private void FovScale()
+        {
+            switch (Input.mouseScrollDelta.y)
             {
-                transform.position =
-                    Vector3.SmoothDamp(transform.position, _topDownPosition, ref _posVelocity, smoothTime);
-                transform.eulerAngles =
-                    Vector3.SmoothDamp(transform.eulerAngles, _topDownRotation, ref _rotVelocity, smoothTime);
+                case > 0 when freeLook.m_Lens.FieldOfView > 10:
+                case < 0 when freeLook.m_Lens.FieldOfView < limitFov:
+                    freeLook.m_Lens.FieldOfView -= Input.mouseScrollDelta.y;
+                    break;
+            }
+
+            switch (Input.mouseScrollDelta.y)
+            {
+                case > 0 when firstPerson.m_Lens.FieldOfView > 10:
+                case < 0 when firstPerson.m_Lens.FieldOfView < limitFov:
+                    firstPerson.m_Lens.FieldOfView -= Input.mouseScrollDelta.y;
+                    break;
+            }
+        }
+
+        private void DragToFreeLook()
+        {
+            if (!Input.GetMouseButton(0))
+            {
+                freeLook.m_XAxis.m_MaxSpeed = 0;
+                freeLook.m_YAxis.m_MaxSpeed = 0;
             }
             else
             {
-                transform.position =
-                    Vector3.SmoothDamp(transform.position, _sidePosition, ref _posVelocity, smoothTime);
-                transform.eulerAngles =
-                    Vector3.SmoothDamp(transform.eulerAngles, _sideRotation, ref _rotVelocity, smoothTime);
+                freeLook.m_XAxis.m_MaxSpeed = _rotateSpeed.Item1;
+                freeLook.m_YAxis.m_MaxSpeed = _rotateSpeed.Item2;
             }
         }
-        
-        /// <summary>
-        /// 游戏开始相机调度
-        /// 游戏开始的相机调度延迟1s
-        /// </summary>
-        private IEnumerator CoolSwitch()
-        {
-            yield return new WaitForSeconds(1f);
-            smoothTime = 1.2f;
-            viewPoint = viewPoint == ViewPoint.Side ? ViewPoint.TopDown : ViewPoint.Side;
-            yield return new WaitForSeconds(1.2f);
-            smoothTime = 0.5f;
-        }
 
-        //同上
-        [EventSubscribe("GameStart")]
-        public object SwitchViewPoint(Object obj)
+        private void FreeLookToFirstPerson()
         {
-            StartCoroutine(CoolSwitch());
-            return null;
-        }
-
-        /// <summary>
-        /// 常规相机调度
-        /// 无延时
-        /// todo:为此方法绑定一个键位设置
-        /// </summary>
-        public void SwitchViewPoint()
-        {
-            viewPoint = viewPoint == ViewPoint.Side ? ViewPoint.TopDown : ViewPoint.Side;
+            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            StartCoroutine(CoolDown());
+            _isFirstPerson = !_isFirstPerson;
+            var temp = _camera.transform.eulerAngles;
+            freeLook.Priority = _isFirstPerson ? 0 : 10;
+            firstPerson.Priority = _isFirstPerson ? 10 : 0;
+            if (_isFirstPerson)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                cinemachinePov.m_HorizontalAxis.Value = temp.y;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
     }
 }

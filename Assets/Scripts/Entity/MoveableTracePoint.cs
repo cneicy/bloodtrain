@@ -10,11 +10,11 @@ namespace Entity
     /// </summary>
     public class MoveableTracePoint : MonoBehaviour
     {
-        [SerializeField] private Vector3 leftPosition;//左追踪点
-        [SerializeField] private Vector3 midPosition;//中追踪点
-        [SerializeField] private Vector3 rightPosition;//右追踪点
-
-        public Vector3 NowPosition { get; set; }//追踪点现在的位置
+        [SerializeField] private Vector3 leftPosition; //左追踪点
+        [SerializeField] private Vector3 midPosition; //中追踪点
+        [SerializeField] private Vector3 rightPosition; //右追踪点
+        private Vector3 _posVelocity; //追踪点速度 SmoothDamp方法使用
+        public Vector3 NowPosition { get; set; } //追踪点现在的位置
 
         private void Start()
         {
@@ -39,6 +39,8 @@ namespace Entity
                 else if (NowPosition == midPosition) NowPosition = rightPosition;
                 ChangePosition();
             }
+
+            transform.position = Vector3.SmoothDamp(transform.position, NowPosition, ref _posVelocity, 0.5f);
         }
 
         /// <summary>

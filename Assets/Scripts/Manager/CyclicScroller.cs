@@ -87,9 +87,9 @@ namespace Manager
             sprites[4].position = startPos + new Vector3(_spriteWidth * 2, 0, 0);
         }
         
-        private void Update()
+        private void FixedUpdate()
         {
-            foreach (var sprite in sprites) sprite.Translate(Vector3.left * (scrollSpeed * Time.deltaTime));
+            foreach (var sprite in sprites) sprite.Translate(Vector3.left * (scrollSpeed * Time.fixedDeltaTime));
 
             var leftmost = sprites.OrderBy(s => s.position.x).First();
 
