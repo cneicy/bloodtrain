@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Handler;
 using UnityEngine;
 using Utils;
 
@@ -65,12 +66,18 @@ namespace Manager
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"执行事件 {eventName} 时发生异常: {ex}");
+                        if (Debugger.IsDebugging)
+                        {
+                            Debug.LogError($"执行事件 {eventName} 时发生异常: {ex}");
+                        }
                     }
                 }
                 else
                 {
-                    Debug.LogError($"事件 {eventName} 的处理程序类型不匹配");
+                    if (Debugger.IsDebugging)
+                    {
+                        Debug.LogError($"事件 {eventName} 的处理程序类型不匹配");
+                    }
                 }
             }
             return results;
@@ -86,7 +93,10 @@ namespace Manager
         {
             if (!_eventHandlers.ContainsKey(eventName)) return;
             _eventHandlers[eventName] = null;
-            Debug.Log($"事件 {eventName} 已取消。");
+            if (Debugger.IsDebugging)
+            {
+                Debug.Log($"事件 {eventName} 已取消。");
+            }
         }
 
         /// <summary>
@@ -101,7 +111,10 @@ namespace Manager
         {
             if (targetObject is null)
             {
-                Debug.Log("已销毁物体无法取消订阅。");
+                if (Debugger.IsDebugging)
+                {
+                    Debug.Log("已销毁物体无法取消订阅。");
+                }
                 return;
             }
 
@@ -124,8 +137,10 @@ namespace Manager
                 if (_eventHandlers[eventName] == null || _eventHandlers[eventName].GetInvocationList().Length == 0)
                     _eventHandlers.Remove(eventName);
             }
-
-            Debug.Log($"已为 {targetObject} 注销所有事件订阅。");
+            if (Debugger.IsDebugging)
+            {
+                Debug.Log($"已为 {targetObject} 注销所有事件订阅。");
+            }
         }
 
 
@@ -136,7 +151,11 @@ namespace Manager
         public void UnregisterAllEvents()
         {
             _eventHandlers.Clear();
-            Debug.Log("所有事件订阅已被注销。");
+            if (Debugger.IsDebugging)
+            {
+                Debug.Log("所有事件订阅已被注销。");
+            }
+            
         }
 
         /// <summary>

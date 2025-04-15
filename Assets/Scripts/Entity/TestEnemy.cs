@@ -1,5 +1,4 @@
 ﻿using Entity.Base;
-using Manager;
 
 namespace Entity
 {

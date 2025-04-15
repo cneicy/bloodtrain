@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Handler;
+using UnityEngine;
 
 namespace Utils
 {
@@ -16,7 +17,10 @@ namespace Utils
             {
                 if (_isShuttingDown)
                 {
-                    Debug.LogWarning($"[Singleton] 实例 {typeof(T)} 已经销毁，返回null。");
+                    if (Debugger.IsDebugging)
+                    {
+                        Debug.LogWarning($"[Singleton] 实例 {typeof(T)} 已经销毁，返回null。");
+                    }
                     return null;
                 }
 
