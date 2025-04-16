@@ -10,7 +10,7 @@ namespace Entity.Base
     {
         public static bool Half = false; //对半
         [SerializeField] public SerializableDictionary<string, GameObject> recipe = new();
-        [SerializeField] public string phrase;
+        [SerializeField] public int phrase;
         [SerializeField] public int level;
 
         private void Awake()
