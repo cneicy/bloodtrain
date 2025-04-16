@@ -7,11 +7,11 @@ namespace Manager
     public class GamePhraseManager : Singleton<GamePhraseManager>
     {
         [FormerlySerializedAs("Phrase")] 
-        public List<string> phrase;
-        public string currentPhrase = "";
+        public List<int> phrase;
+        public int currentPhrase;
 
         
-        public void SwitchPhrase(string leve)
+        public void SwitchPhrase(int leve)
         {
             currentPhrase = leve;
         }
