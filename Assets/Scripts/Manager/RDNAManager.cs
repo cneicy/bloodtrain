@@ -11,6 +11,17 @@ namespace Manager
         [SerializeField]
         public List<GameObject> rdna = new();
 
+        private void OnEnable()
+        {
+            EventManager.Instance.RegisterEventHandlersFromAttributes(this);
+        }
+        private void OnDisable()
+        {
+            if (!EventManager.Instance) return;
+            //事件取消订阅
+            EventManager.Instance.UnregisterAllEventsForObject(this);
+        }
+
         [EventSubscribe("MouseLeftClick")]
         public object OnMouseLeftClick(Vector3 hitPoint)
         {

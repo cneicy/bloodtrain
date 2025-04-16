@@ -6,14 +6,14 @@ namespace Manager
 {
     public class GamePhraseManager : Singleton<GamePhraseManager>
     {
-        [FormerlySerializedAs("Level")] 
-        public List<string> level;
-        public string currentLevel = "";
+        [FormerlySerializedAs("Phrase")] 
+        public List<string> phrase;
+        public string currentPhrase = "";
 
         
-        public void SwitchLevel(string leve)
+        public void SwitchPhrase(string leve)
         {
-            currentLevel = leve;
+            currentPhrase = leve;
         }
     }
 }
