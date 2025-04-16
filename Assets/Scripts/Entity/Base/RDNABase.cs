@@ -29,7 +29,9 @@ namespace Entity.Base
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (recipe.ContainsKey(collision.gameObject.name))
+            Debug.Log(collision.collider.name);
+            if(collision.gameObject.name.Remove(collision.gameObject.name.Length - 7, 7).Equals("")) return;//防止空值通过给槽给合了
+            if (recipe.ContainsKey(collision.gameObject.name.Remove(collision.gameObject.name.Length - 7, 7)))//删除(Clone)
             {
                 MergeHandler.Merge(this, collision);
             }

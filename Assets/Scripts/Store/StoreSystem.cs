@@ -32,7 +32,7 @@ namespace Store
         //商店面板
         [SerializeField] private GameObject storePanel;
         //游戏阶段
-        private string _gameStage;
+        private int _gameStage;
         private void Start()
         {
             //初始化数据
@@ -51,19 +51,19 @@ namespace Store
             }
         }
 
-        private void RandomStoreItem(string gameStage)
+        private void RandomStoreItem(int gameStage)
         { 
             float randomLevel1,randomLevel2,randomLevel3,randomLevel4,randomLevel5;
             switch (gameStage)
             {
-                case "a":
+                case 0:
                     randomLevel1 = 1;
                     break;
-                case "b":
+                case 1:
                     randomLevel1 = 0.7f;
                     randomLevel2 = 1;
                     break;
-                case "c":
+                case 2:
                     randomLevel1 = 0.5f;
                     randomLevel2 = 0.85f;
                     randomLevel3 = 1;

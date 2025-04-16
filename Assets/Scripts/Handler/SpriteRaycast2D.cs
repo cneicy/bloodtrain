@@ -14,17 +14,16 @@ namespace Handler
         [Header("坐标输出")]
         [SerializeField] private Vector3 hitPoint;
         [SerializeField] private float hitDistance;
-
-        [SerializeField] private GameObject circle;
         
         private Camera _mainCamera;
 
-        void Start()
+        private void Start()
         {
+            Debug.Log(RDNAManager.Instance);//todo:当完成商店的对接后删除此行
             _mainCamera = Camera.main;
         }
 
-        void Update()
+        private void Update()
         {
             HandleMouseInteraction();
         }
