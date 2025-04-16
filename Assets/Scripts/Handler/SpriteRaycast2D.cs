@@ -1,3 +1,4 @@
+using Manager;
 using UnityEngine;
 
 namespace Handler
@@ -83,6 +84,7 @@ namespace Handler
                 detectedSprite.color = Color.yellow;
             }
             if (!Input.GetMouseButtonDown(0)) return;
+            EventManager.Instance.TriggerEvent("MouseLeftClick",hitPoint);
             if (Debugger.IsDebugging)
             {
                 Debug.Log($"点击了Sprite: {detectedSprite.name}");
