@@ -9,8 +9,8 @@ namespace Manager
         private Vector3 _posVelocity; //相机位移速度 SmoothDamp方法使用
         private Vector3 _rotVelocity; //相机旋转速度 SmoothDamp方法使用
         [SerializeField] private float limitFov;
-        [SerializeField] private CinemachineFreeLook freeLook;
-        [SerializeField] private CinemachineVirtualCamera firstPerson;
+        [SerializeField] public CinemachineFreeLook freeLook;
+        [SerializeField] public CinemachineVirtualCamera firstPerson;
         [SerializeField] private float mouseSensitivity = 300f;
         [SerializeField] private CinemachinePOV cinemachinePov;
         private bool _isFirstPerson;

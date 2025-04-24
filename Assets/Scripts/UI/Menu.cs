@@ -7,21 +7,21 @@ namespace UI
 {
     public class Menu : MonoBehaviour
     {
-        [SerializeField] private GameObject mainMenu;//主菜单
-        [SerializeField] private GameObject pauseMenu;//暂停菜单
-        [SerializeField] private GameObject failMenu;//失败菜单
+        [SerializeField] private GameObject mainMenu; //主菜单
+        [SerializeField] private GameObject pauseMenu; //暂停菜单
+        [SerializeField] private GameObject failMenu; //失败菜单
 
         private void OnEnable()
         {
-            EventManager.Instance.RegisterEventHandlersFromAttributes(this);//处理[EventSubscribe()]特性标注的事件订阅
+            EventManager.Instance.RegisterEventHandlersFromAttributes(this); //处理[EventSubscribe()]特性标注的事件订阅
         }
 
         private void OnDisable()
         {
             if (!EventManager.Instance) return;
-            EventManager.Instance.UnregisterAllEventsForObject(this);//事件取消订阅
+            EventManager.Instance.UnregisterAllEventsForObject(this); //事件取消订阅
         }
-        
+
         /// <summary>
         /// 在游戏结束事件触发时显示失败菜单并暂停游戏
         /// </summary>
@@ -51,7 +51,7 @@ namespace UI
         /// <summary>
         /// 游戏开始后按下ESC时打开暂停菜单
         /// </summary>
-        private void FixedUpdate()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape) && !mainMenu.activeSelf && !pauseMenu.activeSelf) Pause();
         }
@@ -62,19 +62,28 @@ namespace UI
             throw new NotImplementedException();
         }
 
-        public void Resume()//游戏继续
+        public void Resume() //游戏继续
         {
             Time.timeScale = 1;
+            var temp = Camera.main.GetComponent<CameraManager>();
+            if (temp.freeLook.Priority < temp.firstPerson.Priority)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
             pauseMenu.SetActive(false);
         }
 
-        public void Pause()//游戏暂停
+        public void Pause() //游戏暂停
         {
-            Time.timeScale = 0;
             pauseMenu.SetActive(true);
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-        
-        public void GameQuit()//游戏退出
+
+        public void GameQuit() //游戏退出
         {
             if (Application.isEditor)
                 EditorApplication.isPlaying = false;
