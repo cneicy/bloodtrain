@@ -212,10 +212,6 @@ _TeamCity*
 # DotCover is a Code Coverage Tool
 *.dotCover
 
-# AxoCover is a Code Coverage Tool
-.axoCover/*
-!.axoCover/settings.json
-
 # Coverlet is a free, cross platform Code Coverage Tool
 coverage*.json
 coverage*.xml
