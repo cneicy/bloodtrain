@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Entity.Base
 {
-    public class AttackOrganBase : MonoBehaviour
+    public abstract class AttackOrganBase : AmmoShooter
     {
         [SerializeField] public GameObject cannon;
         [SerializeField] public GameObject cannonBase;
